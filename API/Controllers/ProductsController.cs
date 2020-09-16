@@ -2,6 +2,9 @@ using System.Linq;
 using Infrastructure.Data;
 using Core.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Core.Interfaces;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace API.Controllers
 {
@@ -9,23 +12,37 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-        private readonly StoreContext _context;
-        public ProductsController(StoreContext context)
+        private readonly IProductRepository _repo;
+        public ProductsController(IProductRepository repo)
         {
-            _context = context;
+            _repo = repo;
+
         }
 
         [HttpGet]
-        public ActionResult<Product> GetProducts()
+        public async Task<ActionResult<List<Product>>> GetProducts()
         {
-            var prod = _context.Products.ToList();
+            var prod = await _repo.GetProductsAync();
             return Ok(prod);
         }
 
-        [HttpGet("{{id}}")]
-        public ActionResult GetProduct(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var prod = _context.Products.FirstOrDefault(x=>x.Id == id);
+            var prod = await _repo.GetProductByIdAsync(id);
+            return Ok(prod);
+        }
+
+         [HttpGet("brands")]
+        public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetBrands()
+        {
+            var prod = await _repo.GetProductBrandsAync();
+            return Ok(prod);
+        }
+         [HttpGet("types")]
+        public async Task<ActionResult<IReadOnlyList<ProductType>>> GetProductTypes()
+        {
+            var prod = await _repo.GetProductTypesAync();
             return Ok(prod);
         }
     }
