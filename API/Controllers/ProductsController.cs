@@ -45,7 +45,7 @@ public ProductsController(IProductRepository repo)
         {
             var spec = new ProductsWithTypesAndBrandsSpecification(productParams);
             var countSpec = new ProductWithFiltersForCountSpecification(productParams);
-            var totalItems = await _productRepo.CountAsync(spec);
+            var totalItems = await _productRepo.CountAsync(countSpec);
             var prod = await _productRepo.ListAsync(spec);
             var data = _mapper.Map<IReadOnlyList<Product>,IReadOnlyList<ProductToReturnDto>>(prod);
 
